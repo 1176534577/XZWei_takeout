@@ -9,6 +9,7 @@ import org.qdbd.reggie.service.UserService;
 import org.qdbd.reggie.utils.SMSUtils;
 import org.qdbd.reggie.utils.ValidateCodeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/user")
@@ -24,6 +26,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     /**
      * 发送手机验证码
@@ -41,8 +46,8 @@ public class UserController {
             log.info("code=" + code);
             // SMSUtils.sendMessage("阿里云短信测试", "SMS_154950909", phone, code);
 
-            session.setAttribute(phone, code);
-
+            // session.setAttribute(phone, code);
+            redisTemplate.opsForValue().set(phone,code,5, TimeUnit.MINUTES);
             return R.success("手机验证码短信发送成功");
         }
 
@@ -65,7 +70,10 @@ public class UserController {
         // 获取验证码
         String code = map.get("code");
 
-        String codeInSession = (String) session.getAttribute(phone);
+        // String codeInSession = (String) session.getAttribute(phone);
+
+        String codeInSession = (String) redisTemplate.opsForValue().get(phone);
+
         if (codeInSession != null && codeInSession.equals(code)) {
 
             // 判断当前手机号对应的用户为新用户，若为新用户，自动完成注册
@@ -79,6 +87,9 @@ public class UserController {
                 userService.save(user);
             }
             session.setAttribute("user", user.getId());
+
+            redisTemplate.delete(phone);
+
             return R.success(user);
         }
         return R.error("登录失败");
