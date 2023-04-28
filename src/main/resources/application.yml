@@ -24,6 +24,7 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
     db-config:
+      # 主键配置策略（ASSIGN_ID 雪花算法）
       id-type: ASSIGN_ID
 reggie:
   path: D:\

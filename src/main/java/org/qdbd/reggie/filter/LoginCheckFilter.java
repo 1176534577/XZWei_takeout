@@ -27,7 +27,7 @@ public class LoginCheckFilter implements Filter {
 
         String requestURI = request.getRequestURI();
         // 放行
-        String[] urls = new String[]{"/employee/login", "/employee/logout", "/backend/**", "/front/**","/user/sendMsg", "/user/login"};
+        String[] urls = new String[]{"/employee/login", "/employee/logout", "/backend/**", "/front/**", "/user/sendMsg", "/user/login","/doc.html","/webjars/**","/swagger-resources","/v2/api-docs"};
 
         boolean check = check(urls, requestURI);
         if (check) {
@@ -57,7 +57,6 @@ public class LoginCheckFilter implements Filter {
             filterChain.doFilter(request, response);
             return;
         }
-
 
 
         log.info("拦截：{}", requestURI);
