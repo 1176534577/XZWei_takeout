@@ -47,7 +47,8 @@ public class UserController {
             // SMSUtils.sendMessage("阿里云短信测试", "SMS_154950909", phone, code);
 
             // session.setAttribute(phone, code);
-            redisTemplate.opsForValue().set(phone,code,5, TimeUnit.MINUTES);
+            // 生成验证码缓存到redis，并设置有效期5分钟
+            redisTemplate.opsForValue().set(phone, code, 5, TimeUnit.MINUTES);
             return R.success("手机验证码短信发送成功");
         }
 
@@ -72,6 +73,7 @@ public class UserController {
 
         // String codeInSession = (String) session.getAttribute(phone);
 
+        // 从redis获取验证码
         String codeInSession = (String) redisTemplate.opsForValue().get(phone);
 
         if (codeInSession != null && codeInSession.equals(code)) {
@@ -79,7 +81,7 @@ public class UserController {
             // 判断当前手机号对应的用户为新用户，若为新用户，自动完成注册
             LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
             queryWrapper.eq(User::getPhone, phone);
-            //
+            // 新用户，自动注册
             User user = userService.getOne(queryWrapper);
             if (user == null) {
                 user = new User();
@@ -88,6 +90,7 @@ public class UserController {
             }
             session.setAttribute("user", user.getId());
 
+            // 如果用户登录成功，删除redis中缓存的验证码
             redisTemplate.delete(phone);
 
             return R.success(user);

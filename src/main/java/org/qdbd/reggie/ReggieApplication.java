@@ -11,8 +11,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @SpringBootApplication
 @ServletComponentScan(basePackages = {"org.qdbd.reggie.filter"})
 @EnableTransactionManagement
-// 开启Spring Cache注解方式的缓存功能
-@EnableCaching
 public class ReggieApplication {
     public static void main(String[] args) throws RuntimeException {
         SpringApplication.run(ReggieApplication.class, args);
