@@ -150,7 +150,7 @@ public class DishController {
      */
     @GetMapping("/list")
     public R<List<DishDto>> list(Dish dish) {
-        List<DishDto> dishDtoList = null;
+        List<DishDto> dishDtoList;
         // 动态构造key
         String key = "dish_" + dish.getCategoryId() + "_" + dish.getStatus();
         // 先从redis获取
