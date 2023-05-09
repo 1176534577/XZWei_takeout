@@ -10,10 +10,25 @@ spring:
       username: root
       password: ryj1836127
   redis:
-    host: 127.0.0.1
-    port: 6379
-    password:
-    database: 0
+    cluster:
+      # 集群节点
+      nodes: 192.168.220.129:7000,192.168.220.129:7001,192.168.220.129:7002,192.168.220.129:7003,192.168.220.129:7004,192.168.220.129:7005
+      # 最大重定向次数
+      max-redirects: 5
+    # 密码
+    # password: myredis
+    lettuce:
+      pool:
+        min-idle: 0
+        max-active: 8
+        max-wait: -1
+        max-idle: 8
+  
+#  redis:
+#    host: 127.0.0.1
+#    port: 6379
+#    password:
+#    database: 0
   cache:
     redis:
       time-to-live: 1800000
