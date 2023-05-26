@@ -3,16 +3,16 @@ server:
 spring:
   application:
     name: reggie_take_out
-  datasource:
-    druid:
-      driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://localhost:3306/reggie?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
-      username: root
-      password: ryj1836127
+#  datasource:
+#    druid:
+#      driver-class-name: com.mysql.cj.jdbc.Driver
+#      url: jdbc:mysql://localhost:3306/reggie?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+#      username: root
+#      password: ryj1836127
   redis:
     cluster:
       # 集群节点
-      nodes: 192.168.220.129:7000,192.168.220.129:7001,192.168.220.129:7002,192.168.220.129:7003,192.168.220.129:7004,192.168.220.129:7005
+      nodes: 192.168.220.132:6379,192.168.220.132:6380,192.168.220.133:6379,192.168.220.133:6380,192.168.220.134:6379,192.168.220.134:6380
       # 最大重定向次数
       max-redirects: 5
     # 密码
@@ -47,7 +47,7 @@ spring:
       slave:
         type: com.alibaba.druid.pool.DruidDataSource
         driver-class-name: com.mysql.cj.jdbc.Driver
-        url: jdbc:mysql://192.168.220.129:3306/reggie?characterEncoding=utf-8
+        url: jdbc:mysql://192.168.220.132:3306/reggie?characterEncoding=utf-8
         username: root
         password: ryj1836127
     masterslave:
@@ -64,6 +64,40 @@ spring:
         show: true #开启SQL显示，默认false
   main:
     allow-bean-definition-overriding: true
+  kafka:
+    bootstrap-servers: 192.168.220.132:9092,192.168.220.133:9092,192.168.220.134:9092
+    producer: # 生产者
+      retries: 3 # 设置大于0的值，则客户端会将发送失败的记录重新发送
+      batch-size: 16384
+      buffer-memory: 33554432
+      acks: 1
+      # 指定消息key和消息体的编解码方式
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: default-group
+      enable-auto-commit: false
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    listener:
+      # 当每一条记录被消费者监听器（ListenerConsumer）处理之后提交
+      # RECORD
+      # 当每一批poll()的数据被消费者监听器（ListenerConsumer）处理之后提交
+      # BATCH
+      # 当每一批poll()的数据被消费者监听器（ListenerConsumer）处理之后，距离上次提交时间大于TIME时提交
+      # TIME
+      # 当每一批poll()的数据被消费者监听器（ListenerConsumer）处理之后，被处理record数量大于等于COUNT时提交
+      # COUNT
+      # TIME |　COUNT　有一个条件满足时提交
+      # COUNT_TIME
+      # 当每一批poll()的数据被消费者监听器（ListenerConsumer）处理之后, 手动调用Acknowledgment.acknowledge()后提交
+      # MANUAL
+      # 手动调用Acknowledgment.acknowledge()后立即提交，一般使用这种
+      # MANUAL_IMMEDIATE
+      ack-mode: manual_immediate
+
+
 mybatis-plus:
   configuration:
     #在映射实体或者属性时，将数据库中表名和字段名中的下划线去掉，按照驼峰命名法映射

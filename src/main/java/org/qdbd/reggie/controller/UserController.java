@@ -10,6 +10,9 @@ import org.qdbd.reggie.utils.SMSUtils;
 import org.qdbd.reggie.utils.ValidateCodeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
+import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -30,6 +34,11 @@ public class UserController {
     @Autowired
     private RedisTemplate redisTemplate;
 
+    @Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
+
+    private final static String TOPIC_NAME = "telephone";
+
     /**
      * 发送手机验证码
      *
@@ -37,18 +46,17 @@ public class UserController {
      * @return
      */
     @PostMapping("/sendMsg")
-    public R<String> sendMsg(HttpSession session, @RequestBody User user) {
+    public R<String> sendMsg(HttpSession session, @RequestBody User user) throws ExecutionException, InterruptedException {
         // 获取手机号
         String phone = user.getPhone();
+
+
         // 生成随机的4为验证码
         if (StringUtils.isNotEmpty(phone)) {
-            String code = ValidateCodeUtils.generateValidateCode(4).toString();
-            log.info("code=" + code);
-            // SMSUtils.sendMessage("阿里云短信测试", "SMS_154950909", phone, code);
+            ListenableFuture<SendResult<String, String>> key = kafkaTemplate.send(TOPIC_NAME, "key", phone);
+            SendResult<String, String> result = key.get();
+            System.out.println("发送结果："+result.toString());
 
-            // session.setAttribute(phone, code);
-            // 生成验证码缓存到redis，并设置有效期5分钟
-            redisTemplate.opsForValue().set(phone, code, 5, TimeUnit.MINUTES);
             return R.success("手机验证码短信发送成功");
         }
 

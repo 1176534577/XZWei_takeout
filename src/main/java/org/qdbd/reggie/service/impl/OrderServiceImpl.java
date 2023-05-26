@@ -35,11 +35,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
 
     /**
      * 用户下单
+     * <p>
+     * 在 @Transactional 注解中如果不配置rollbackFor属性,那么事务只会在遇到RuntimeException的时候才会回滚，加上 rollbackFor=Exception.class,可以让事务在遇到非运行时异常时也回滚。
      *
      * @param orders
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void submit(Orders orders) {
         // 用户id
         Long userId = BaseContext.getCurrentId();

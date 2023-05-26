@@ -26,11 +26,13 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal> impl
 
     /**
      * 新增套餐和套餐包含的菜品
+     * <p>
+     * 在 @Transactional 注解中如果不配置rollbackFor属性,那么事务只会在遇到RuntimeException的时候才会回滚，加上 rollbackFor=Exception.class,可以让事务在遇到非运行时异常时也回滚。
      *
      * @param setmealDto
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void saveWithDish(SetmealDto setmealDto) {
         // 保存套餐基本信息
         this.save(setmealDto);
@@ -44,11 +46,13 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal> impl
 
     /**
      * 删除套餐setmeal，同时删除和套餐大关联菜品数据setmealDish
+     * <p>
+     * 在 @Transactional 注解中如果不配置rollbackFor属性,那么事务只会在遇到RuntimeException的时候才会回滚，加上 rollbackFor=Exception.class,可以让事务在遇到非运行时异常时也回滚。
      *
      * @param ids
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void removeWithDish(List<Long> ids) {
         // 判断是否停售
         LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();

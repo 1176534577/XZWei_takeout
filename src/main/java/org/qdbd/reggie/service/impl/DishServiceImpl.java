@@ -28,8 +28,12 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
     @Autowired
     private DishFlavorService dishFlavorService;
 
+    /**
+     * 在 @Transactional 注解中如果不配置rollbackFor属性,那么事务只会在遇到RuntimeException的时候才会回滚，加上 rollbackFor=Exception.class,可以让事务在遇到非运行时异常时也回滚。
+     * @param dishDto
+     */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void saveWithFlavor(DishDto dishDto) {
         // 保存基本信息
         this.save(dishDto);
@@ -73,8 +77,12 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         return dishDto;
     }
 
+    /**
+     * 在 @Transactional 注解中如果不配置rollbackFor属性,那么事务只会在遇到RuntimeException的时候才会回滚，加上 rollbackFor=Exception.class,可以让事务在遇到非运行时异常时也回滚。
+     * @param dishDto
+     */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void updateWithFlavor(DishDto dishDto) {
         // 更新菜品
         this.updateById(dishDto);
