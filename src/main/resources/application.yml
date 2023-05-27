@@ -3,16 +3,16 @@ server:
 spring:
   application:
     name: reggie_take_out
-  datasource:
-    druid:
-      driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://localhost:3306/reggie?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
-      username: root
-      password: ryj1836127
+#  datasource:
+#    druid:
+#      driver-class-name: com.mysql.cj.jdbc.Driver
+#      url: jdbc:mysql://localhost:3306/reggie?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+#      username: root
+#      password: ryj1836127
   redis:
     cluster:
       # 集群节点
-      nodes: 192.168.220.129:7000,192.168.220.129:7001,192.168.220.129:7002,192.168.220.129:7003,192.168.220.129:7004,192.168.220.129:7005
+      nodes: 192.168.220.132:6379,192.168.220.132:6380,192.168.220.133:6379,192.168.220.133:6380,192.168.220.134:6379,192.168.220.134:6380
       # 最大重定向次数
       max-redirects: 5
     # 密码
@@ -47,7 +47,7 @@ spring:
       slave:
         type: com.alibaba.druid.pool.DruidDataSource
         driver-class-name: com.mysql.cj.jdbc.Driver
-        url: jdbc:mysql://192.168.220.129:3306/reggie?characterEncoding=utf-8
+        url: jdbc:mysql://192.168.220.132:3306/reggie?characterEncoding=utf-8
         username: root
         password: ryj1836127
     masterslave:
