@@ -11,7 +11,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>org.qdbd</groupId>
-    <artifactId>Reggie_takeout</artifactId>
+    <artifactId>XZWei_takeout</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
